@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: locale/ca/_lib/localize/index.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: locale/ca/_lib/localize/index.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import buildLocalizeFn from '../../../_lib/buildLocalizeFn/index'
+
+/**
+ * General information
+ * Reference: https://aplicacions.llengua.gencat.cat
+ * Reference: https://www.uoc.edu/portal/ca/servei-linguistic/convencions/abreviacions/simbols/simbols-habituals.html
+ */
+
+/**
+ * Abans de Crist: https://aplicacions.llengua.gencat.cat/llc/AppJava/index.html?input_cercar=abans+de+crist&amp;action=Principal&amp;method=detall_completa&amp;numPagina=1&amp;idHit=6876&amp;database=FITXES_PUB&amp;tipusFont=Fitxes%20de%20l%27Optimot&amp;idFont=6876&amp;titol=abans%20de%20Crist%20(abreviatura)%20/%20abans%20de%20Crist%20(sigla)&amp;numeroResultat=1&amp;clickLink=detall&amp;tipusCerca=cerca.fitxes
+ * Desprest de Crist: https://aplicacions.llengua.gencat.cat/llc/AppJava/index.html?input_cercar=despr%E9s+de+crist&amp;action=Principal&amp;method=detall_completa&amp;numPagina=1&amp;idHit=6879&amp;database=FITXES_PUB&amp;tipusFont=Fitxes%20de%20l%27Optimot&amp;idFont=6879&amp;titol=despr%E9s%20de%20Crist%20(sigla)%20/%20despr%E9s%20de%20Crist%20(abreviatura)&amp;numeroResultat=1&amp;clickLink=detall&amp;tipusCerca=cerca.fitxes
+ */
+var eraValues = {
+  narrow: ['aC', 'dC'],
+  abbreviated: ['a. de C.', 'd. de C.'],
+  wide: ['abans de Crist', 'després de Crist']
+}
+
+var quarterValues = {
+  narrow: ['1', '2', '3', '4'],
+  abbreviated: ['T1', 'T2', 'T3', 'T4'],
+  wide: ['1r trimestre', '2n trimestre', '3r trimestre', '4t trimestre']
+}
+
+/**
+ * Dins d'un text convé fer servir la forma sencera dels mesos, ja que sempre és més clar el mot sencer que l'abreviatura, encara que aquesta sigui força coneguda.
+ * Cal reservar, doncs, les abreviatures per a les llistes o classificacions, els gràfics, les taules o quadres estadístics, els textos publicitaris, etc.
+ *
+ * Reference: https://aplicacions.llengua.gencat.cat/llc/AppJava/index.html?input_cercar=abreviacions+mesos&amp;action=Principal&amp;method=detall_completa&amp;numPagina=1&amp;idHit=8402&amp;database=FITXES_PUB&amp;tipusFont=Fitxes%20de%20l%27Optimot&amp;idFont=8402&amp;titol=abreviatures%20dels%20mesos%20de%20l%27any&amp;numeroResultat=5&amp;clickLink=detall&amp;tipusCerca=cerca.fitxes
+ */
+var monthValues = {
+  narrow: [
+    'GN',
+    'FB',
+    'MÇ',
+    'AB',
+    'MG',
+    'JN',
+    'JL',
+    'AG',
+    'ST',
+    'OC',
+    'NV',
+    'DS'
+  ],
+  /**
+   * Les abreviatures dels mesos de l'any es formen seguint una de les normes generals de formació d'abreviatures.
+   * S'escriu la primera síl·laba i les consonants de la síl·laba següent anteriors a la primera vocal.
+   * Els mesos de març, maig i juny no s'abreugen perquè són paraules d'una sola síl·laba.
+   */
+  abbreviated: [
+    'gen.',
+    'febr.',
+    'març',
+    'abr.',
+    'maig',
+    'juny',
+    'jul.',
+    'ag.',
+    'set.',
+    'oct.',
+    'nov.',
+    'des.'
+  ],
+  wide: [
+    'gener',
+    'febrer',
+    'març',
+    'abril',
+    'maig',
+    'juny',
+    'juliol',
+    'agost',
+    'setembre',
+    'octubre',
+    'novembre',
+    'desembre'
+  ]
+}
+
+/**
+ * Les abreviatures dels dies de la setmana comencen totes amb la lletra d.
+ * Tot seguit porten la consonant següent a la i, excepte en el cas de dimarts, dimecres i diumenge, en què aquesta consonant és la m i, per tant, hi podria haver confusió.
+ * Per evitar-ho, s'ha substituït la m per una t (en el cas de dimarts), una c (en el cas de dimecres) i una g (en el cas de diumenge), respectivament.
+ *
+ * Seguint la norma general d'ús de les abreviatures, les dels dies de la setmana sempre porten punt final.
+ * Igualment, van amb la primera lletra en majúscula quan la paraula sencera també hi aniria.
+ * En canvi, van amb la primera lletra en minúscula quan la inicial de la paraula sencera també hi aniria.
+ *
+ * Reference: https://aplicacions.llengua.gencat.cat/llc/AppJava/index.html?input_cercar=abreviatures+dies&amp;action=Principal&amp;method=detall_completa&amp;numPagina=1&amp;idHit=8387&amp;database=FITXES_PUB&amp;tipusFont=Fitxes%20de%20l%27Optimot&amp;idFont=8387&amp;titol=abreviatures%20dels%20dies%20de%20la%20setmana&amp;numeroResultat=1&amp;clickLink=detall&amp;tipusCerca=cerca.tot
+ */
+var dayValues = {
+  narrow: ['dg.', 'dl.', 'dt.', 'dm.', 'dj.', 'dv.', 'ds.'],
+  short: ['dg.', 'dl.', 'dt.', 'dm.', 'dj.', 'dv.', 'ds.'],
+  abbreviated: ['dg.', 'dl.', 'dt.', 'dm.', 'dj.', 'dv.', 'ds.'],
+  wide: [
+    'diumenge',
+    'dilluns',
+    'dimarts',
+    'dimecres',
+    'dijous',
+    'divendres',
+    'dissabte'
+  ]
+}
+
+/**
+ * Reference: https://aplicacions.llengua.gencat.cat/llc/AppJava/index.html?action=Principal&amp;method=detall&amp;input_cercar=parts+del+dia&amp;numPagina=1&amp;database=FITXES_PUB&amp;idFont=12801&amp;idHit=12801&amp;tipusFont=Fitxes+de+l%27Optimot&amp;numeroResultat=1&amp;databases_avansada=&amp;categories_avansada=&amp;clickLink=detall&amp;titol=Nom+de+les+parts+del+dia&amp;tematica=&amp;tipusCerca=cerca.fitxes
+ */
+var dayPeriodValues = {
+  narrow: {
+    am: 'am',
+    pm: 'pm',
+    midnight: 'mitjanit',
+    noon: 'migdia',
+    morning: 'matí',
+    afternoon: 'tarda',
+    evening: 'vespre',
+    night: 'nit'
+  },
+  abbreviated: {
+    am: 'a.m.',
+    pm: 'p.m.',
+    midnight: 'mitjanit',
+    noon: 'migdia',
+    morning: 'matí',
+    afternoon: 'tarda',
+    evening: 'vespre',
+    night: 'nit'
+  },
+  wide: {
+    am: 'ante meridiem',
+    pm: 'post meridiem',
+    midnight: 'mitjanit',
+    noon: 'migdia',
+    morning: 'matí',
+    afternoon: 'tarda',
+    evening: 'vespre',
+    night: 'nit'
+  }
+}
+var formattingDayPeriodValues = {
+  narrow: {
+    am: 'am',
+    pm: 'pm',
+    midnight: 'de la mitjanit',
+    noon: 'del migdia',
+    morning: 'del matí',
+    afternoon: 'de la tarda',
+    evening: 'del vespre',
+    night: 'de la nit'
+  },
+  abbreviated: {
+    am: 'AM',
+    pm: 'PM',
+    midnight: 'de la mitjanit',
+    noon: 'del migdia',
+    morning: 'del matí',
+    afternoon: 'de la tarda',
+    evening: 'del vespre',
+    night: 'de la nit'
+  },
+  wide: {
+    am: 'ante meridiem',
+    pm: 'post meridiem',
+    midnight: 'de la mitjanit',
+    noon: 'del migdia',
+    morning: 'del matí',
+    afternoon: 'de la tarda',
+    evening: 'del vespre',
+    night: 'de la nit'
+  }
+}
+
+/**
+ * Quan van en singular, els nombres ordinals es representen, en forma d’abreviatura, amb la xifra seguida de l’última lletra del mot desplegat.
+ * És optatiu posar punt després de la lletra.
+ *
+ * Reference: https://aplicacions.llengua.gencat.cat/llc/AppJava/pdf/abrevia.pdf#page=18
+ *
+ * @param {Number} dirtyNumber
+ * @param {Object} [_dirtyOptions]
+ */
+function ordinalNumber(dirtyNumber, _dirtyOptions) {
+  var number = Number(dirtyNumber)
+  var rem100 = number % 100
+  if (rem100 > 20 || rem100 &lt; 10) {
+    switch (rem100 % 10) {
+      case 1:
+        return number + 'r'
+      case 2:
+        return number + 'n'
+      case 3:
+        return number + 'r'
+      case 4:
+        return number + 't'
+    }
+  }
+  return number + 'è'
+}
+
+var localize = {
+  ordinalNumber: ordinalNumber,
+
+  era: buildLocalizeFn({
+    values: eraValues,
+    defaultWidth: 'wide'
+  }),
+
+  quarter: buildLocalizeFn({
+    values: quarterValues,
+    defaultWidth: 'wide',
+    argumentCallback: function(quarter) {
+      return Number(quarter) - 1
+    }
+  }),
+
+  month: buildLocalizeFn({
+    values: monthValues,
+    defaultWidth: 'wide'
+  }),
+
+  day: buildLocalizeFn({
+    values: dayValues,
+    defaultWidth: 'wide'
+  }),
+
+  dayPeriod: buildLocalizeFn({
+    values: dayPeriodValues,
+    defaultWidth: 'wide',
+    formattingValues: formattingDayPeriodValues,
+    defaultFormattingWidth: 'wide'
+  })
+}
+
+export default localize
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#add">add</a></li><li><a href="global.html#addBusinessDays">addBusinessDays</a></li><li><a href="global.html#addDays">addDays</a></li><li><a href="global.html#addHours">addHours</a></li><li><a href="global.html#addISOWeekYears">addISOWeekYears</a></li><li><a href="global.html#addMilliseconds">addMilliseconds</a></li><li><a href="global.html#addMinutes">addMinutes</a></li><li><a href="global.html#addMonths">addMonths</a></li><li><a href="global.html#addQuarters">addQuarters</a></li><li><a href="global.html#addSeconds">addSeconds</a></li><li><a href="global.html#addWeeks">addWeeks</a></li><li><a href="global.html#addYears">addYears</a></li><li><a href="global.html#areIntervalsOverlapping">areIntervalsOverlapping</a></li><li><a href="global.html#closestIndexTo">closestIndexTo</a></li><li><a href="global.html#closestTo">closestTo</a></li><li><a href="global.html#compareAsc">compareAsc</a></li><li><a href="global.html#compareDesc">compareDesc</a></li><li><a href="global.html#differenceInBusinessDays">differenceInBusinessDays</a></li><li><a href="global.html#differenceInCalendarDays">differenceInCalendarDays</a></li><li><a href="global.html#differenceInCalendarISOWeeks">differenceInCalendarISOWeeks</a></li><li><a href="global.html#differenceInCalendarISOWeekYears">differenceInCalendarISOWeekYears</a></li><li><a href="global.html#differenceInCalendarMonths">differenceInCalendarMonths</a></li><li><a href="global.html#differenceInCalendarQuarters">differenceInCalendarQuarters</a></li><li><a href="global.html#differenceInCalendarWeeks">differenceInCalendarWeeks</a></li><li><a href="global.html#differenceInCalendarYears">differenceInCalendarYears</a></li><li><a href="global.html#differenceInDays">differenceInDays</a></li><li><a href="global.html#differenceInHours">differenceInHours</a></li><li><a href="global.html#differenceInISOWeekYears">differenceInISOWeekYears</a></li><li><a href="global.html#differenceInMilliseconds">differenceInMilliseconds</a></li><li><a href="global.html#differenceInMinutes">differenceInMinutes</a></li><li><a href="global.html#differenceInMonths">differenceInMonths</a></li><li><a href="global.html#differenceInQuarters">differenceInQuarters</a></li><li><a href="global.html#differenceInSeconds">differenceInSeconds</a></li><li><a href="global.html#differenceInWeeks">differenceInWeeks</a></li><li><a href="global.html#differenceInYears">differenceInYears</a></li><li><a href="global.html#eachDayOfInterval">eachDayOfInterval</a></li><li><a href="global.html#eachHourOfInterval">eachHourOfInterval</a></li><li><a href="global.html#eachMonthOfInterval">eachMonthOfInterval</a></li><li><a href="global.html#eachQuarterOfInterval">eachQuarterOfInterval</a></li><li><a href="global.html#eachWeekendOfInterval">eachWeekendOfInterval</a></li><li><a href="global.html#eachWeekendOfMonth">eachWeekendOfMonth</a></li><li><a href="global.html#eachWeekendOfYear">eachWeekendOfYear</a></li><li><a href="global.html#eachWeekOfInterval">eachWeekOfInterval</a></li><li><a href="global.html#eachYearOfInterval">eachYearOfInterval</a></li><li><a href="global.html#endOfDay">endOfDay</a></li><li><a href="global.html#endOfDecade">endOfDecade</a></li><li><a href="global.html#endOfHour">endOfHour</a></li><li><a href="global.html#endOfISOWeek">endOfISOWeek</a></li><li><a href="global.html#endOfISOWeekYear">endOfISOWeekYear</a></li><li><a href="global.html#endOfMinute">endOfMinute</a></li><li><a href="global.html#endOfMonth">endOfMonth</a></li><li><a href="global.html#endOfQuarter">endOfQuarter</a></li><li><a href="global.html#endOfSecond">endOfSecond</a></li><li><a href="global.html#endOfToday">endOfToday</a></li><li><a href="global.html#endOfTomorrow">endOfTomorrow</a></li><li><a href="global.html#endOfWeek">endOfWeek</a></li><li><a href="global.html#endOfYear">endOfYear</a></li><li><a href="global.html#endOfYesterday">endOfYesterday</a></li><li><a href="global.html#eraValues">eraValues</a></li><li><a href="global.html#format">format</a></li><li><a href="global.html#formatDistance">formatDistance</a></li><li><a href="global.html#formatDistanceLocale">formatDistanceLocale</a></li><li><a href="global.html#formatDistanceStrict">formatDistanceStrict</a></li><li><a href="global.html#formatDistanceToNow">formatDistanceToNow</a></li><li><a href="global.html#formatDistanceToNowStrict">formatDistanceToNowStrict</a></li><li><a href="global.html#formatDuration">formatDuration</a></li><li><a href="global.html#formatISO">formatISO</a></li><li><a href="global.html#formatISO9075">formatISO9075</a></li><li><a href="global.html#formatISODuration">formatISODuration</a></li><li><a href="global.html#formatRelative">formatRelative</a></li><li><a href="global.html#formatRFC3339">formatRFC3339</a></li><li><a href="global.html#formatRFC7231">formatRFC7231</a></li><li><a href="global.html#fromUnixTime">fromUnixTime</a></li><li><a href="global.html#getDate">getDate</a></li><li><a href="global.html#getDay">getDay</a></li><li><a href="global.html#getDayOfYear">getDayOfYear</a></li><li><a href="global.html#getDaysInMonth">getDaysInMonth</a></li><li><a href="global.html#getDaysInYear">getDaysInYear</a></li><li><a href="global.html#getDecade">getDecade</a></li><li><a href="global.html#getHours">getHours</a></li><li><a href="global.html#getISODay">getISODay</a></li><li><a href="global.html#getISOWeek">getISOWeek</a></li><li><a href="global.html#getISOWeeksInYear">getISOWeeksInYear</a></li><li><a href="global.html#getISOWeekYear">getISOWeekYear</a></li><li><a href="global.html#getMilliseconds">getMilliseconds</a></li><li><a href="global.html#getMinutes">getMinutes</a></li><li><a href="global.html#getMonth">getMonth</a></li><li><a href="global.html#getOverlappingDaysInIntervals">getOverlappingDaysInIntervals</a></li><li><a href="global.html#getQuarter">getQuarter</a></li><li><a href="global.html#getSeconds">getSeconds</a></li><li><a href="global.html#getTime">getTime</a></li><li><a href="global.html#getTimezoneOffsetInMilliseconds">getTimezoneOffsetInMilliseconds</a></li><li><a href="global.html#getUnixTime">getUnixTime</a></li><li><a href="global.html#getWeek">getWeek</a></li><li><a href="global.html#getWeekOfMonth">getWeekOfMonth</a></li><li><a href="global.html#getWeeksInMonth">getWeeksInMonth</a></li><li><a href="global.html#getWeekYear">getWeekYear</a></li><li><a href="global.html#getYear">getYear</a></li><li><a href="global.html#intervalToDuration">intervalToDuration</a></li><li><a href="global.html#isAfter">isAfter</a></li><li><a href="global.html#isBefore">isBefore</a></li><li><a href="global.html#isDate">isDate</a></li><li><a href="global.html#isEqual">isEqual</a></li><li><a href="global.html#isExists">isExists</a></li><li><a href="global.html#isFirstDayOfMonth">isFirstDayOfMonth</a></li><li><a href="global.html#isFriday">isFriday</a></li><li><a href="global.html#isFuture">isFuture</a></li><li><a href="global.html#isLastDayOfMonth">isLastDayOfMonth</a></li><li><a href="global.html#isLeapYear">isLeapYear</a></li><li><a href="global.html#isMatch">isMatch</a></li><li><a href="global.html#isMonday">isMonday</a></li><li><a href="global.html#isPast">isPast</a></li><li><a href="global.html#isSameDay">isSameDay</a></li><li><a href="global.html#isSameHour">isSameHour</a></li><li><a href="global.html#isSameISOWeek">isSameISOWeek</a></li><li><a href="global.html#isSameISOWeekYear">isSameISOWeekYear</a></li><li><a href="global.html#isSameMinute">isSameMinute</a></li><li><a href="global.html#isSameMonth">isSameMonth</a></li><li><a href="global.html#isSameQuarter">isSameQuarter</a></li><li><a href="global.html#isSameSecond">isSameSecond</a></li><li><a href="global.html#isSameWeek">isSameWeek</a></li><li><a href="global.html#isSameYear">isSameYear</a></li><li><a href="global.html#isSaturday">isSaturday</a></li><li><a href="global.html#isSunday">isSunday</a></li><li><a href="global.html#isThisHour">isThisHour</a></li><li><a href="global.html#isThisISOWeek">isThisISOWeek</a></li><li><a href="global.html#isThisMinute">isThisMinute</a></li><li><a href="global.html#isThisMonth">isThisMonth</a></li><li><a href="global.html#isThisQuarter">isThisQuarter</a></li><li><a href="global.html#isThisSecond">isThisSecond</a></li><li><a href="global.html#isThisWeek">isThisWeek</a></li><li><a href="global.html#isThisYear">isThisYear</a></li><li><a href="global.html#isThursday">isThursday</a></li><li><a href="global.html#isToday">isToday</a></li><li><a href="global.html#isTomorrow">isTomorrow</a></li><li><a href="global.html#isTuesday">isTuesday</a></li><li><a href="global.html#isValid">isValid</a></li><li><a href="global.html#isWednesday">isWednesday</a></li><li><a href="global.html#isWeekend">isWeekend</a></li><li><a href="global.html#isWithinInterval">isWithinInterval</a></li><li><a href="global.html#isYesterday">isYesterday</a></li><li><a href="global.html#lastDayOfDecade">lastDayOfDecade</a></li><li><a href="global.html#lastDayOfISOWeek">lastDayOfISOWeek</a></li><li><a href="global.html#lastDayOfISOWeekYear">lastDayOfISOWeekYear</a></li><li><a href="global.html#lastDayOfMonth">lastDayOfMonth</a></li><li><a href="global.html#lastDayOfQuarter">lastDayOfQuarter</a></li><li><a href="global.html#lastDayOfWeek">lastDayOfWeek</a></li><li><a href="global.html#lastDayOfYear">lastDayOfYear</a></li><li><a href="global.html#lightFormat">lightFormat</a></li><li><a href="global.html#locale">locale</a></li><li><a href="global.html#max">max</a></li><li><a href="global.html#maxTime">maxTime</a></li><li><a href="global.html#milliseconds">milliseconds</a></li><li><a href="global.html#min">min</a></li><li><a href="global.html#parse">parse</a></li><li><a href="global.html#parseISO">parseISO</a></li><li><a href="global.html#parseJSON">parseJSON</a></li><li><a href="global.html#roundToNearestMinutes">roundToNearestMinutes</a></li><li><a href="global.html#set">set</a></li><li><a href="global.html#setDate">setDate</a></li><li><a href="global.html#setDay">setDay</a></li><li><a href="global.html#setDayOfYear">setDayOfYear</a></li><li><a href="global.html#setHours">setHours</a></li><li><a href="global.html#setISODay">setISODay</a></li><li><a href="global.html#setISOWeek">setISOWeek</a></li><li><a href="global.html#setISOWeekYear">setISOWeekYear</a></li><li><a href="global.html#setMilliseconds">setMilliseconds</a></li><li><a href="global.html#setMinutes">setMinutes</a></li><li><a href="global.html#setMonth">setMonth</a></li><li><a href="global.html#setQuarter">setQuarter</a></li><li><a href="global.html#setSeconds">setSeconds</a></li><li><a href="global.html#setWeek">setWeek</a></li><li><a href="global.html#setWeekYear">setWeekYear</a></li><li><a href="global.html#setYear">setYear</a></li><li><a href="global.html#startOfDay">startOfDay</a></li><li><a href="global.html#startOfDecade">startOfDecade</a></li><li><a href="global.html#startOfHour">startOfHour</a></li><li><a href="global.html#startOfISOWeek">startOfISOWeek</a></li><li><a href="global.html#startOfISOWeekYear">startOfISOWeekYear</a></li><li><a href="global.html#startOfMinute">startOfMinute</a></li><li><a href="global.html#startOfMonth">startOfMonth</a></li><li><a href="global.html#startOfQuarter">startOfQuarter</a></li><li><a href="global.html#startOfSecond">startOfSecond</a></li><li><a href="global.html#startOfToday">startOfToday</a></li><li><a href="global.html#startOfTomorrow">startOfTomorrow</a></li><li><a href="global.html#startOfWeek">startOfWeek</a></li><li><a href="global.html#startOfWeekYear">startOfWeekYear</a></li><li><a href="global.html#startOfYear">startOfYear</a></li><li><a href="global.html#startOfYesterday">startOfYesterday</a></li><li><a href="global.html#sub">sub</a></li><li><a href="global.html#subBusinessDays">subBusinessDays</a></li><li><a href="global.html#subDays">subDays</a></li><li><a href="global.html#subHours">subHours</a></li><li><a href="global.html#subISOWeekYears">subISOWeekYears</a></li><li><a href="global.html#subMilliseconds">subMilliseconds</a></li><li><a href="global.html#subMinutes">subMinutes</a></li><li><a href="global.html#subMonths">subMonths</a></li><li><a href="global.html#subQuarters">subQuarters</a></li><li><a href="global.html#subSeconds">subSeconds</a></li><li><a href="global.html#subWeeks">subWeeks</a></li><li><a href="global.html#subYears">subYears</a></li><li><a href="global.html#toDate">toDate</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.5</a> on Fri Apr 16 2021 13:00:04 GMT+0800 (GMT+08:00)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

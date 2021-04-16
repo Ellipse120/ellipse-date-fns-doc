@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: differenceInISOWeekYears/index.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: differenceInISOWeekYears/index.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import toDate from '../toDate/index'
+import differenceInCalendarISOWeekYears from '../differenceInCalendarISOWeekYears/index'
+import compareAsc from '../compareAsc/index'
+import subISOWeekYears from '../subISOWeekYears/index'
+import requiredArgs from '../_lib/requiredArgs/index'
+
+/**
+ * @name differenceInISOWeekYears
+ * @category ISO Week-Numbering Year Helpers
+ * @summary Get the number of full ISO week-numbering years between the given dates.
+ *
+ * @description
+ * Get the number of full ISO week-numbering years between the given dates.
+ *
+ * ISO week-numbering year: http://en.wikipedia.org/wiki/ISO_week_date
+ *
+ * ### v2.0.0 breaking changes:
+ *
+ * - [Changes that are common for the whole library](https://github.com/date-fns/date-fns/blob/master/docs/upgradeGuide.md#Common-Changes).
+ *
+ * - The function was renamed from `differenceInISOYears` to `differenceInISOWeekYears`.
+ *   "ISO week year" is short for [ISO week-numbering year](https://en.wikipedia.org/wiki/ISO_week_date).
+ *   This change makes the name consistent with
+ *   locale-dependent week-numbering year helpers, e.g., `addWeekYears`.
+ *
+ * @param {Date|Number} dateLeft - the later date
+ * @param {Date|Number} dateRight - the earlier date
+ * @returns {Number} the number of full ISO week-numbering years
+ * @throws {TypeError} 2 arguments required
+ *
+ * @example
+ * // How many full ISO week-numbering years are between 1 January 2010 and 1 January 2012?
+ * var result = differenceInISOWeekYears(
+ *   new Date(2012, 0, 1),
+ *   new Date(2010, 0, 1)
+ * )
+ * //=> 1
+ */
+export default function differenceInISOWeekYears(
+  dirtyDateLeft,
+  dirtyDateRight
+) {
+  requiredArgs(2, arguments)
+
+  var dateLeft = toDate(dirtyDateLeft)
+  var dateRight = toDate(dirtyDateRight)
+
+  var sign = compareAsc(dateLeft, dateRight)
+  var difference = Math.abs(
+    differenceInCalendarISOWeekYears(dateLeft, dateRight)
+  )
+  dateLeft = subISOWeekYears(dateLeft, sign * difference)
+
+  // Math.abs(diff in full ISO years - diff in calendar ISO years) === 1
+  // if last calendar ISO year is not full
+  // If so, result must be decreased by 1 in absolute value
+  var isLastISOWeekYearNotFull = compareAsc(dateLeft, dateRight) === -sign
+  var result = sign * (difference - isLastISOWeekYearNotFull)
+  // Prevent negative zero
+  return result === 0 ? 0 : result
+}
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#add">add</a></li><li><a href="global.html#addBusinessDays">addBusinessDays</a></li><li><a href="global.html#addDays">addDays</a></li><li><a href="global.html#addHours">addHours</a></li><li><a href="global.html#addISOWeekYears">addISOWeekYears</a></li><li><a href="global.html#addMilliseconds">addMilliseconds</a></li><li><a href="global.html#addMinutes">addMinutes</a></li><li><a href="global.html#addMonths">addMonths</a></li><li><a href="global.html#addQuarters">addQuarters</a></li><li><a href="global.html#addSeconds">addSeconds</a></li><li><a href="global.html#addWeeks">addWeeks</a></li><li><a href="global.html#addYears">addYears</a></li><li><a href="global.html#areIntervalsOverlapping">areIntervalsOverlapping</a></li><li><a href="global.html#closestIndexTo">closestIndexTo</a></li><li><a href="global.html#closestTo">closestTo</a></li><li><a href="global.html#compareAsc">compareAsc</a></li><li><a href="global.html#compareDesc">compareDesc</a></li><li><a href="global.html#differenceInBusinessDays">differenceInBusinessDays</a></li><li><a href="global.html#differenceInCalendarDays">differenceInCalendarDays</a></li><li><a href="global.html#differenceInCalendarISOWeeks">differenceInCalendarISOWeeks</a></li><li><a href="global.html#differenceInCalendarISOWeekYears">differenceInCalendarISOWeekYears</a></li><li><a href="global.html#differenceInCalendarMonths">differenceInCalendarMonths</a></li><li><a href="global.html#differenceInCalendarQuarters">differenceInCalendarQuarters</a></li><li><a href="global.html#differenceInCalendarWeeks">differenceInCalendarWeeks</a></li><li><a href="global.html#differenceInCalendarYears">differenceInCalendarYears</a></li><li><a href="global.html#differenceInDays">differenceInDays</a></li><li><a href="global.html#differenceInHours">differenceInHours</a></li><li><a href="global.html#differenceInISOWeekYears">differenceInISOWeekYears</a></li><li><a href="global.html#differenceInMilliseconds">differenceInMilliseconds</a></li><li><a href="global.html#differenceInMinutes">differenceInMinutes</a></li><li><a href="global.html#differenceInMonths">differenceInMonths</a></li><li><a href="global.html#differenceInQuarters">differenceInQuarters</a></li><li><a href="global.html#differenceInSeconds">differenceInSeconds</a></li><li><a href="global.html#differenceInWeeks">differenceInWeeks</a></li><li><a href="global.html#differenceInYears">differenceInYears</a></li><li><a href="global.html#eachDayOfInterval">eachDayOfInterval</a></li><li><a href="global.html#eachHourOfInterval">eachHourOfInterval</a></li><li><a href="global.html#eachMonthOfInterval">eachMonthOfInterval</a></li><li><a href="global.html#eachQuarterOfInterval">eachQuarterOfInterval</a></li><li><a href="global.html#eachWeekendOfInterval">eachWeekendOfInterval</a></li><li><a href="global.html#eachWeekendOfMonth">eachWeekendOfMonth</a></li><li><a href="global.html#eachWeekendOfYear">eachWeekendOfYear</a></li><li><a href="global.html#eachWeekOfInterval">eachWeekOfInterval</a></li><li><a href="global.html#eachYearOfInterval">eachYearOfInterval</a></li><li><a href="global.html#endOfDay">endOfDay</a></li><li><a href="global.html#endOfDecade">endOfDecade</a></li><li><a href="global.html#endOfHour">endOfHour</a></li><li><a href="global.html#endOfISOWeek">endOfISOWeek</a></li><li><a href="global.html#endOfISOWeekYear">endOfISOWeekYear</a></li><li><a href="global.html#endOfMinute">endOfMinute</a></li><li><a href="global.html#endOfMonth">endOfMonth</a></li><li><a href="global.html#endOfQuarter">endOfQuarter</a></li><li><a href="global.html#endOfSecond">endOfSecond</a></li><li><a href="global.html#endOfToday">endOfToday</a></li><li><a href="global.html#endOfTomorrow">endOfTomorrow</a></li><li><a href="global.html#endOfWeek">endOfWeek</a></li><li><a href="global.html#endOfYear">endOfYear</a></li><li><a href="global.html#endOfYesterday">endOfYesterday</a></li><li><a href="global.html#eraValues">eraValues</a></li><li><a href="global.html#format">format</a></li><li><a href="global.html#formatDistance">formatDistance</a></li><li><a href="global.html#formatDistanceLocale">formatDistanceLocale</a></li><li><a href="global.html#formatDistanceStrict">formatDistanceStrict</a></li><li><a href="global.html#formatDistanceToNow">formatDistanceToNow</a></li><li><a href="global.html#formatDistanceToNowStrict">formatDistanceToNowStrict</a></li><li><a href="global.html#formatDuration">formatDuration</a></li><li><a href="global.html#formatISO">formatISO</a></li><li><a href="global.html#formatISO9075">formatISO9075</a></li><li><a href="global.html#formatISODuration">formatISODuration</a></li><li><a href="global.html#formatRelative">formatRelative</a></li><li><a href="global.html#formatRFC3339">formatRFC3339</a></li><li><a href="global.html#formatRFC7231">formatRFC7231</a></li><li><a href="global.html#fromUnixTime">fromUnixTime</a></li><li><a href="global.html#getDate">getDate</a></li><li><a href="global.html#getDay">getDay</a></li><li><a href="global.html#getDayOfYear">getDayOfYear</a></li><li><a href="global.html#getDaysInMonth">getDaysInMonth</a></li><li><a href="global.html#getDaysInYear">getDaysInYear</a></li><li><a href="global.html#getDecade">getDecade</a></li><li><a href="global.html#getHours">getHours</a></li><li><a href="global.html#getISODay">getISODay</a></li><li><a href="global.html#getISOWeek">getISOWeek</a></li><li><a href="global.html#getISOWeeksInYear">getISOWeeksInYear</a></li><li><a href="global.html#getISOWeekYear">getISOWeekYear</a></li><li><a href="global.html#getMilliseconds">getMilliseconds</a></li><li><a href="global.html#getMinutes">getMinutes</a></li><li><a href="global.html#getMonth">getMonth</a></li><li><a href="global.html#getOverlappingDaysInIntervals">getOverlappingDaysInIntervals</a></li><li><a href="global.html#getQuarter">getQuarter</a></li><li><a href="global.html#getSeconds">getSeconds</a></li><li><a href="global.html#getTime">getTime</a></li><li><a href="global.html#getTimezoneOffsetInMilliseconds">getTimezoneOffsetInMilliseconds</a></li><li><a href="global.html#getUnixTime">getUnixTime</a></li><li><a href="global.html#getWeek">getWeek</a></li><li><a href="global.html#getWeekOfMonth">getWeekOfMonth</a></li><li><a href="global.html#getWeeksInMonth">getWeeksInMonth</a></li><li><a href="global.html#getWeekYear">getWeekYear</a></li><li><a href="global.html#getYear">getYear</a></li><li><a href="global.html#intervalToDuration">intervalToDuration</a></li><li><a href="global.html#isAfter">isAfter</a></li><li><a href="global.html#isBefore">isBefore</a></li><li><a href="global.html#isDate">isDate</a></li><li><a href="global.html#isEqual">isEqual</a></li><li><a href="global.html#isExists">isExists</a></li><li><a href="global.html#isFirstDayOfMonth">isFirstDayOfMonth</a></li><li><a href="global.html#isFriday">isFriday</a></li><li><a href="global.html#isFuture">isFuture</a></li><li><a href="global.html#isLastDayOfMonth">isLastDayOfMonth</a></li><li><a href="global.html#isLeapYear">isLeapYear</a></li><li><a href="global.html#isMatch">isMatch</a></li><li><a href="global.html#isMonday">isMonday</a></li><li><a href="global.html#isPast">isPast</a></li><li><a href="global.html#isSameDay">isSameDay</a></li><li><a href="global.html#isSameHour">isSameHour</a></li><li><a href="global.html#isSameISOWeek">isSameISOWeek</a></li><li><a href="global.html#isSameISOWeekYear">isSameISOWeekYear</a></li><li><a href="global.html#isSameMinute">isSameMinute</a></li><li><a href="global.html#isSameMonth">isSameMonth</a></li><li><a href="global.html#isSameQuarter">isSameQuarter</a></li><li><a href="global.html#isSameSecond">isSameSecond</a></li><li><a href="global.html#isSameWeek">isSameWeek</a></li><li><a href="global.html#isSameYear">isSameYear</a></li><li><a href="global.html#isSaturday">isSaturday</a></li><li><a href="global.html#isSunday">isSunday</a></li><li><a href="global.html#isThisHour">isThisHour</a></li><li><a href="global.html#isThisISOWeek">isThisISOWeek</a></li><li><a href="global.html#isThisMinute">isThisMinute</a></li><li><a href="global.html#isThisMonth">isThisMonth</a></li><li><a href="global.html#isThisQuarter">isThisQuarter</a></li><li><a href="global.html#isThisSecond">isThisSecond</a></li><li><a href="global.html#isThisWeek">isThisWeek</a></li><li><a href="global.html#isThisYear">isThisYear</a></li><li><a href="global.html#isThursday">isThursday</a></li><li><a href="global.html#isToday">isToday</a></li><li><a href="global.html#isTomorrow">isTomorrow</a></li><li><a href="global.html#isTuesday">isTuesday</a></li><li><a href="global.html#isValid">isValid</a></li><li><a href="global.html#isWednesday">isWednesday</a></li><li><a href="global.html#isWeekend">isWeekend</a></li><li><a href="global.html#isWithinInterval">isWithinInterval</a></li><li><a href="global.html#isYesterday">isYesterday</a></li><li><a href="global.html#lastDayOfDecade">lastDayOfDecade</a></li><li><a href="global.html#lastDayOfISOWeek">lastDayOfISOWeek</a></li><li><a href="global.html#lastDayOfISOWeekYear">lastDayOfISOWeekYear</a></li><li><a href="global.html#lastDayOfMonth">lastDayOfMonth</a></li><li><a href="global.html#lastDayOfQuarter">lastDayOfQuarter</a></li><li><a href="global.html#lastDayOfWeek">lastDayOfWeek</a></li><li><a href="global.html#lastDayOfYear">lastDayOfYear</a></li><li><a href="global.html#lightFormat">lightFormat</a></li><li><a href="global.html#locale">locale</a></li><li><a href="global.html#max">max</a></li><li><a href="global.html#maxTime">maxTime</a></li><li><a href="global.html#milliseconds">milliseconds</a></li><li><a href="global.html#min">min</a></li><li><a href="global.html#parse">parse</a></li><li><a href="global.html#parseISO">parseISO</a></li><li><a href="global.html#parseJSON">parseJSON</a></li><li><a href="global.html#roundToNearestMinutes">roundToNearestMinutes</a></li><li><a href="global.html#set">set</a></li><li><a href="global.html#setDate">setDate</a></li><li><a href="global.html#setDay">setDay</a></li><li><a href="global.html#setDayOfYear">setDayOfYear</a></li><li><a href="global.html#setHours">setHours</a></li><li><a href="global.html#setISODay">setISODay</a></li><li><a href="global.html#setISOWeek">setISOWeek</a></li><li><a href="global.html#setISOWeekYear">setISOWeekYear</a></li><li><a href="global.html#setMilliseconds">setMilliseconds</a></li><li><a href="global.html#setMinutes">setMinutes</a></li><li><a href="global.html#setMonth">setMonth</a></li><li><a href="global.html#setQuarter">setQuarter</a></li><li><a href="global.html#setSeconds">setSeconds</a></li><li><a href="global.html#setWeek">setWeek</a></li><li><a href="global.html#setWeekYear">setWeekYear</a></li><li><a href="global.html#setYear">setYear</a></li><li><a href="global.html#startOfDay">startOfDay</a></li><li><a href="global.html#startOfDecade">startOfDecade</a></li><li><a href="global.html#startOfHour">startOfHour</a></li><li><a href="global.html#startOfISOWeek">startOfISOWeek</a></li><li><a href="global.html#startOfISOWeekYear">startOfISOWeekYear</a></li><li><a href="global.html#startOfMinute">startOfMinute</a></li><li><a href="global.html#startOfMonth">startOfMonth</a></li><li><a href="global.html#startOfQuarter">startOfQuarter</a></li><li><a href="global.html#startOfSecond">startOfSecond</a></li><li><a href="global.html#startOfToday">startOfToday</a></li><li><a href="global.html#startOfTomorrow">startOfTomorrow</a></li><li><a href="global.html#startOfWeek">startOfWeek</a></li><li><a href="global.html#startOfWeekYear">startOfWeekYear</a></li><li><a href="global.html#startOfYear">startOfYear</a></li><li><a href="global.html#startOfYesterday">startOfYesterday</a></li><li><a href="global.html#sub">sub</a></li><li><a href="global.html#subBusinessDays">subBusinessDays</a></li><li><a href="global.html#subDays">subDays</a></li><li><a href="global.html#subHours">subHours</a></li><li><a href="global.html#subISOWeekYears">subISOWeekYears</a></li><li><a href="global.html#subMilliseconds">subMilliseconds</a></li><li><a href="global.html#subMinutes">subMinutes</a></li><li><a href="global.html#subMonths">subMonths</a></li><li><a href="global.html#subQuarters">subQuarters</a></li><li><a href="global.html#subSeconds">subSeconds</a></li><li><a href="global.html#subWeeks">subWeeks</a></li><li><a href="global.html#subYears">subYears</a></li><li><a href="global.html#toDate">toDate</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.5</a> on Fri Apr 16 2021 13:00:04 GMT+0800 (GMT+08:00)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
