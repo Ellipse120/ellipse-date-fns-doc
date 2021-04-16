@@ -1,1 +1,1 @@
-## date-fns API doc
+## [date-fns API doc](./index.html)
